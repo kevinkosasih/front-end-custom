@@ -1,0 +1,28 @@
+.headerChatContainer{
+  width : 100%;
+  height : 30px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.headerChatContent {
+  width : 90%;
+  display: inline-block;
+  color: white;
+  font-family: HelveticaNeue;
+}
+
+.cancelContainer{
+  position: absolute;
+  right: 6px;
+  top: 2px;
+}
+
+.cancelButton {
+  width: 15px;
+  height : 15px;
+}
+
+.cancelButton:hover{
+  cursor: pointer;
+}

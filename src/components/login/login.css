@@ -1,0 +1,58 @@
+.formLogin{
+  padding-top: 3%;
+  animation: fade-in 0.4s;
+}
+
+.formModal{
+  margin:0 auto;
+  width: 35%;
+  background-color: rgb(255, 255, 255);
+  align-content: center;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.logo{
+  width: 150px;
+  height: 150px;
+}
+
+.logo-position{
+  width: 100%;
+  text-align: center;
+}
+
+.login-position{
+  text-align: center;
+}
+
+.login-error{
+  background-color: rgba(9, 9, 9, 0.85);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 40px;
+  color : white;
+  z-index: 1;
+  font-family: HelveticaNeue;
+  animation: fade-out 2s ease-in 1s forwards;
+}
+
+.login-error p{
+  line-height: 40px
+}
+
+#loginButtonForm{
+  width: 100%;
+  text-align: center;
+  background-color: #3f3f3f ;
+  color: #a0a099;
+}
+
+#loginButtonForm:hover{
+  background-color: rgba(62, 62, 62, 0.76);
+}

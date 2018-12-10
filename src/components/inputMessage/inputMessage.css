@@ -1,0 +1,26 @@
+.footer-app{
+  background-color: #3f3f3f;
+  width: 100%;
+  position: absolute;
+  bottom: 0 ;
+}
+
+.textInputChat textarea{
+  font-size: 12px;
+  margin-left: 8px;
+  line-height: 21px;
+  margin-top: 4px;
+  height: 25px;
+}
+
+.textInputChat textarea:focus{
+  outline: 0px;
+  box-shadow: 0px 0px 3px 0px rgb(52, 49, 55);
+}
+
+.message{
+  border-radius: 4px;
+  resize: none;
+  box-sizing: border-box;
+  width: 95%;
+}

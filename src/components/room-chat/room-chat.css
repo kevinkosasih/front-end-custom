@@ -1,0 +1,43 @@
+@font-face { font-family: Mousse; src: url('../../Mousse-Regular.otf'); }
+@font-face { font-family: HelveticaNeue;  src: url('../../HelveticaNeueMedium.ttf'); }
+@font-face { font-family: HelveticaNeueLight;  src: url('../../HelveticaNeueLight.ttf'); }
+@keyframes slidein {
+  from {
+    transform: translate3d(0, 350px, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.chatRoom{
+  position: fixed;
+  bottom: 0;
+  right: 35px;
+  height : 350px;
+  width : 300px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  background-image: linear-gradient(to bottom, #3f3f3f, #d2dbdc);
+  animation: slidein 0.2s ease-in;
+}
+
+.chatBox{
+  position: fixed;
+  bottom: 0;
+  right: 35px;
+  width : 300px;
+  border : 1px solid rgb(172, 172, 172);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: rgb(105, 107, 104);
+  height : 35px;
+  line-height: 35px;
+  padding-left : 10px;
+}
+
+.chatBox:hover{
+  cursor: pointer;
+  background-color: rgb(120, 121, 119);
+}
