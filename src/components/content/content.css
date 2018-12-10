@@ -1,0 +1,7 @@
+.contentChat{
+  width : 100%;
+  height : calc(100% - 65px);
+  background-color : #747474;
+  overflow-y: auto;
+  position: absolute;
+}

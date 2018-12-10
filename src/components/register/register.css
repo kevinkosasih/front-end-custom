@@ -1,0 +1,60 @@
+.EmailUsernameErrorMessage{
+  background-color: rgba(63, 63, 63, 0.85);
+  position: fixed;
+  width: 100%;
+  text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 40px;
+  line-height: 40px;
+  z-index: 1;
+  font-family: sans-serif;
+  animation: fade-out 1s ease-in 1s forwards;
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.formRegister{
+  padding-top: 3%;
+  animation: fade-in 0.4s;
+}
+
+.formModal{
+  margin:0 auto;
+  width: 35%;
+  background-color: rgb(255, 255, 255);
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.logo{
+  width: 150px;
+  height: 150px;
+}
+
+.logo-position{
+  width: 100%;
+  text-align: center;
+}
+
+.errorMessage{
+  color: #e38d8d;
+  font-family: arial;
+  font-weight: 520;
+  display: inline-block;
+  float: left;
+}
+
+#registerButtonForm{
+  width: 100%;
+  text-align: center;
+  background-color: #3f3f3f ;
+  color: a0a099 ;
+}
+
+#registerButtonForm:hover{
+  background-color: rgba(62, 62, 62, 0.76);
+}

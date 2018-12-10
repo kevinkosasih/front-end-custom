@@ -1,0 +1,14 @@
+.welcomeButtonPosition{
+  padding: 20%;
+  animation: fade-in 5s;
+}
+
+#welcomeButton{
+  background-color: #3f3f3f;
+  font-family:monospace;
+  color: white;
+}
+
+#welcomeButton:hover{
+  background-color: rgba(62, 62, 62, 0.76);
+}
