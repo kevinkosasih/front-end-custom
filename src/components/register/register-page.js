@@ -29,10 +29,10 @@ class RegisterForm extends React.Component{
   }
 
   usernameValidation = (username,regex) => {
-    if(username.length < 5){
+    if(username.length < 6){
       this.setState({
         usernameIsValid : false,
-        messageUsername : "Username must at least 5 characters"
+        messageUsername : "Username must at least 6 characters"
       });
       return false
     }
@@ -104,12 +104,14 @@ class RegisterForm extends React.Component{
         passwordIsValid : false,
         messagePass : "This field is required"
       })
+      return false
     }
-    else if(password.length < 6){
+    if(password.length < 6){
       this.setState({
         passwordIsValid : false,
         messagePass : "Password must at least 6 characters"
-      });
+      })
+      return false
     }
     else if (password !== "" && password.length >= 6) {
       this.setState({
@@ -122,6 +124,7 @@ class RegisterForm extends React.Component{
         retypeIsValid : false,
         messageRetype : "This field is required"
       })
+      return false
     }
     else if(password !== retypePassword){
       this.setState({
@@ -156,7 +159,8 @@ class RegisterForm extends React.Component{
     this.passwordValidation(password,retypePassword)
 
     if(this.usernameValidation(username,regexUsername) && this.nameValidation(firstName,lastName) && this.emailValidation(email,regexEmail) && this.passwordValidation(password,retypePassword)){
-      this.RegisUser(username,email,password,retypePassword,firstName,lastName);
+      // this.RegisUser(username,email,password,retypePassword,firstName,lastName);
+      console.log('masuk regis bck');
     }
   }
 

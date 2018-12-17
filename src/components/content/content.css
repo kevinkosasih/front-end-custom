@@ -4,4 +4,5 @@
   background-color : #747474;
   overflow-y: auto;
   position: absolute;
+  /* word-wrap: break-word; */
 }

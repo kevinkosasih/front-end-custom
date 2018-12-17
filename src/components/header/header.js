@@ -14,9 +14,9 @@ export default class Header extends React.Component{
       <div className = "headerChatContainer">
         <div className = "headerChatContent">
           <div className = "cancelContainer">
-            <img src = {cancel} onClick = {this.props.closeChatUser} className = "cancelButton"/>
+            <img src = {cancel} onClick = {()=>this.props.closeChatUser()} className = "cancelButton"/>
           </div>
-          header
+          Admin
         </div>
       </div>
     )

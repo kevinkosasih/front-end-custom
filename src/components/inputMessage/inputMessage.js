@@ -14,7 +14,6 @@ export default class inputMessage extends React.Component{
       message : "",
       enterPressed : false
     }
-    this.messageOnChange =this.messageOnChange.bind(this);
   }
 
   componentDidMount(){
@@ -27,7 +26,12 @@ export default class inputMessage extends React.Component{
   onEnterPress = (e) => {
     if(e.keyCode === 13 && e.shiftKey === false) {
       if(!this.state.enterPressed){
-        this.onSend(e);
+        if(this.props.chatList.length === 0 ){
+          this.createChatroom(e,this.props.chatID)
+        }
+        else{
+          this.onSend(e);
+        }
       }
       this.setState({
         enterPressed : true
@@ -40,6 +44,32 @@ export default class inputMessage extends React.Component{
     }
   }
 
+  createChatroom = (e,chatID) => {
+    const {sender} = this.props
+    fetch('/addchatroom',{
+      credentials:'include',
+      method:'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chatid:chatID,
+        user:'ADMIN'
+      }),
+    }).then(res => res.json())
+    .then(json =>{
+      let socketChatlist = {
+        myusername:sender.username,
+        myname:sender.name,
+        otherusername:"ADMIN",
+        othername:'Admin',
+        chatId:json.chatId
+      }
+      sendSocket('newchatlist',socketChatlist);
+      this.onSend(e)
+    })
+  }
+
   onSend(e){
     e.preventDefault();
     const timeNow = Date.now()
@@ -49,11 +79,8 @@ export default class inputMessage extends React.Component{
     const yyyy = today.getFullYear();
     const date = dd+'-'+mm+'-'+yyyy;
     const message = this.state.message.trim();
-    const attachment = this.state.file;
-    const attachmentName = this.state.file.name;
-    const attachmentType = this.state.file.type;
-    if(message || attachment){
-      this.attachPhoto(attachment,attachmentName,attachmentType,message,timeNow,date);
+    if(message){
+      this.sendMassage(message,timeNow,date);
     }
   }
 
@@ -65,25 +92,21 @@ export default class inputMessage extends React.Component{
     })
   }
 
-  attachPhoto = (attachment,attachmentName,attachmentType,message,today,date) =>{
+  sendMassage = (message,today,date) =>{
     this.setState({
       error: ''
     })
-    const senderUsername = this.props.senderUsername;
-    const sender = this.props.sender;
-    const chatId = this.props.chatId;
+    const {senderUsername,sender,chatID} = this.props;
     const receive = this.props.recieve;
+
     var formData = new FormData();
-    formData.append ('chatId', chatId);
+    formData.append ('chatId', chatID);
     formData.append ('senderUsername', senderUsername);
     formData.append ('sender',sender);
-    formData.append ('Attachment' , attachment)
-    formData.append ('AttachmentName', attachmentName);
-    formData.append ('AttachmentType', attachmentType);
     formData.append ('message', message);
     formData.append ('timeStamp', today);
     formData.append ('date', date);
-    formData.append ('recieve',receive);
+    formData.append ('recieve','ADMIN');
 
     fetch('/chat',{
       credentials : 'include',
@@ -92,42 +115,21 @@ export default class inputMessage extends React.Component{
     }).then(res => res.json())
     .then (response => {
       if(response.success){
-        if(response.filename){
-          let send = {
-            reciever:this.props.recieve,
-            sender:{
-              username: this.props.senderUsername,
-              name:this.props.sender
-            },
-            chatId:this.props.chatId,
-            message:this.state.message.trim(),
-            attachment: {
-              name : response.filename,
-              type : attachmentType
-            },
-            time : today,
-            date : date
-          }
-          sendSocket('sendChat',send);
-        } else {
-          let send = {
-            reciever:this.props.recieve,
-            sender:{
-              username: this.props.senderUsername,
-              name:this.props.sender
-            },
-            chatId:this.props.chatId,
-            message:this.state.message.trim(),
-            time : today,
-            date : date
-          }
-          sendSocket('sendChat',send);
+        let send = {
+          reciever:this.props.recieve,
+          sender:{
+            username: senderUsername,
+            name:this.props.sender.name
+          },
+          chatId:chatID,
+          message:this.state.message.trim(),
+          time : today,
+          date : date
         }
+        sendSocket('sendChat',send);
         this.setState({
           time : response.time,
-          message:'',
-          imagePreviewUrl :'',
-          file : ''
+          message:''
         })
       }
       else{
