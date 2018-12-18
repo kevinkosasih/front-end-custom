@@ -1,7 +1,9 @@
 import React from "react";
 import './content.css';
 import InputMessage from '../inputMessage/inputMessage';
-
+import {
+  recieveSocket
+}from "../../socket/socketconnect";
 
 export default class Content extends React.Component{
 
@@ -9,17 +11,86 @@ export default class Content extends React.Component{
     super(props);
   }
 
+  componentDidMount() {
+    this.scrollToBottom();
+    this.scrollSocket();
+  }
+
+  componentDidUpdate(){
+  }
+
+  getDateandTime =(timestamp,chat,index) => {
+    let time  = new Date(chat[index].time)
+    const options = { weekday: 'long' };
+    const day = time.toLocaleDateString('en-US' , options);
+    const dayName = day.substring(0,3);
+    let currentDate
+    if(index !== 0){
+      if(chat[index].date === chat[index-1].date){
+        currentDate = 1
+      }
+      else {
+        currentDate = 2
+      }
+    } else {
+      currentDate = 2
+    }
+    if( currentDate === 1){
+      return null
+    }
+    else {
+      return (
+        <div className = "timeSeparator-container">
+          <div className = "timeSeparator">
+            {dayName+', '+chat[index].date}
+          </div>
+        </div>
+      )
+    }
+  }
+
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({behavior : "auto", block : "end"});
+  }
+
+  scrollSocket(){
+    recieveSocket ('changechatroom',(err,recieve) =>{
+      this.scrollToBottom();
+    })
+  }
+
   render(){
     const{myUser,chatID,chatList}=this.props
-    console.log(this.props);
     return(
       <div>
         <div className = "contentChat">
-          {this.props.chatlog.map((chat,urutan)=>(
-            <div>
-              {chat.message}
-            </div>
-          ))}
+          {this.props.chatlog.map((chat,urutan)=>{
+            if(chat.sender.username === myUser.username){
+              return(
+                <div>
+                  <div className = "dateAndTime">
+                    {this.getDateandTime(chat.time,this.props.chatlog,urutan)}
+                  </div>
+                  <div className = "userMessageContainer">
+                    <div className = "userMessage">
+                      <p>{chat.message}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            } else {
+              return(
+                <div className = "adminMessageContainer">
+                  <div className = "adminMessage">
+                    <p>{chat.message}</p>
+                  </div>
+                </div>
+              )
+            }
+          })}
+          <div style={{ float:"right", clear: "both"}}
+            ref={(asd) => { this.messagesEnd = asd; }}>
+          </div>
         </div>
         <InputMessage
           chatList={chatList}

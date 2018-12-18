@@ -19,7 +19,7 @@ export default class RoomChat extends React.Component{
       isLoading:true,
       chatList:[],
       chatlog:[],
-      notif:0
+      notif: false
     }
   }
   componentDidMount(){
@@ -33,15 +33,17 @@ export default class RoomChat extends React.Component{
   recieveChatSocket = () =>{
     const {account} = this.state
     recieveSocket(account.chatID,(err,recieve)=>{
-      console.log(recieve);
       if(this.state.isOpen){
         this.setState({
           chatlog:this.state.chatlog.concat(recieve.message)
         })
+        sendSocket('readchat',account.chatID);
+        sendSocket('changechatroom');
       }
       else{
         this.setState({
-          notif:this.state.notif+1
+          chatlog:this.state.chatlog.concat(recieve.message),
+          notif: true
         })
       }
     })
@@ -94,27 +96,45 @@ export default class RoomChat extends React.Component{
         let notif = 0
         for(var read in json.message){
           if(json.message[read].sender.username !== this.state.account.username && !json.message[read].receiver[0].read){
-            notif++
+            this.setState({
+              notif : true
+            })
+            break;
           }
         }
         this.setState({
-          chatlog : json.message,
-          notif : notif
+          chatlog : json.message
         })
       }
     })
   }
 
-  openChatUser = () =>{
+  openChatUser = (chat) =>{
     this.setState({
-      notif:0,
+      notif: false,
       isOpen : true
     })
+    sendSocket('readchat',chat);
+    this.readChat()
   }
 
   closeChatUser = () =>{
     this.setState({
       isOpen : false
+    })
+  }
+
+  readChat = () => {
+    const {account} = this.state
+    fetch('/readNotif',{
+      method:'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token : account.chatID,
+        username : account.username
+      }),
     })
   }
 
@@ -163,14 +183,12 @@ export default class RoomChat extends React.Component{
               chatlog={chatlog}
               myUser={account}
               chatID={account.chatID}
-              chatlog={this.state.chatlog}
             />
           </div> :
-          <div onClick = {this.openChatUser} className = "chatBox">
-            Click to chat with our administrator {notif}
+          <div onClick = {() => this.openChatUser(account.chatID)} className = "chatBox">
+            Click to chat with our administrator <div className = {"notif-"+this.state.notif}/>
           </div>
         }
-
       </div>
     )
   }

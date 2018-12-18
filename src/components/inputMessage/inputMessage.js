@@ -102,7 +102,7 @@ export default class inputMessage extends React.Component{
     var formData = new FormData();
     formData.append ('chatId', chatID);
     formData.append ('senderUsername', senderUsername);
-    formData.append ('sender',sender);
+    formData.append ('sender',sender.name);
     formData.append ('message', message);
     formData.append ('timeStamp', today);
     formData.append ('date', date);
@@ -139,7 +139,6 @@ export default class inputMessage extends React.Component{
         })
       }
     })
-
   }
 
   render(){

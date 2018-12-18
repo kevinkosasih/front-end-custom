@@ -159,8 +159,7 @@ class RegisterForm extends React.Component{
     this.passwordValidation(password,retypePassword)
 
     if(this.usernameValidation(username,regexUsername) && this.nameValidation(firstName,lastName) && this.emailValidation(email,regexEmail) && this.passwordValidation(password,retypePassword)){
-      // this.RegisUser(username,email,password,retypePassword,firstName,lastName);
-      console.log('masuk regis bck');
+      this.RegisUser(username,email,password,retypePassword,firstName,lastName);
     }
   }
 
