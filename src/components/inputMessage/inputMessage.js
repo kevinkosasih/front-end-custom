@@ -25,6 +25,7 @@ export default class inputMessage extends React.Component{
 
   onEnterPress = (e) => {
     if(e.keyCode === 13 && e.shiftKey === false) {
+      e.preventDefault();
       if(!this.state.enterPressed){
         if(this.props.chatList.length === 0 ){
           this.createChatroom(e,this.props.chatID)
@@ -40,7 +41,7 @@ export default class inputMessage extends React.Component{
         this.setState({
           enterPressed : false
         })
-      }.bind(this), 0.00000001);
+      }.bind(this), 4000);
     }
   }
 
@@ -116,7 +117,10 @@ export default class inputMessage extends React.Component{
     .then (response => {
       if(response.success){
         let send = {
-          reciever:this.props.recieve,
+          receiver:[
+            {username:"ADMIN",
+            read:false}
+          ],
           sender:{
             username: senderUsername,
             name:this.props.sender.name

@@ -22,12 +22,16 @@ export default class RoomChat extends React.Component{
       notif: false
     }
   }
+
   componentDidMount(){
     this.getData();
   }
+
   componentWillUnmount(){
     this.recieveChatSocket();
-    this.newchatlist(this.state.account.username)
+    this.newchatlist(this.state.account.username);
+    this.unsendMessageSocket(this.state.account.chatID);
+    this.readChatSocket(this.state.account.chatID);
   }
 
   recieveChatSocket = () =>{
@@ -48,6 +52,7 @@ export default class RoomChat extends React.Component{
       }
     })
   }
+
   newchatlist = (username) => {
     recieveSocket('chatlist'+username,(err,recieve)=>{
       this.setState({
@@ -71,6 +76,8 @@ export default class RoomChat extends React.Component{
           isLoading:false
         })
         this.recieveChatSocket();
+        this.unsendMessageSocket(this.state.account.chatID);
+        this.readChatSocket(this.state.account.chatID);
         if(json.akun.chatList.length === 0){
           this.newchatlist(json.akun.username);
         }
@@ -124,6 +131,53 @@ export default class RoomChat extends React.Component{
     })
   }
 
+  unsendMessageSocket (port) {
+   recieveSocket ('unsendMessage'+port, (err,recieve) =>{
+       let chatlog = this.state.chatlog;
+       for(var index in chatlog){
+         if(new Date(chatlog[index].time).getTime() === new Date(recieve).getTime()){
+           if(chatlog[index].sender.username === "ADMIN" ){
+             chatlog.splice(index,1);
+             if(chatlog[index-1].receiver[0].read === true){
+                this.setState({
+                  notif : false
+                })
+             }
+           }
+         }
+         this.setState({
+           chatlog : chatlog
+         })
+       }
+   })
+ }
+
+ readChatSocket (port) {
+   recieveSocket ('readchat'+port, (err,recieve) =>{
+     if(this.state.chatlog.length !== 0){
+       let chatlog = this.state.chatlog;
+       for(var index = chatlog.length-1 ; index >= 0 ; index--){
+           if(chatlog[index].receiver[0].read === false){
+             chatlog.splice(index,1,
+               { chatId: port,
+                 date : chatlog[index].date,
+                 message : chatlog[index].message,
+                 attachment : chatlog[index].attachment,
+                 receiver:[{username :chatlog[index].receiver[0].username, read : true}],
+                 sender : {username : chatlog[index].sender.username,  name : chatlog[index].sender.name},
+                 time : chatlog[index].time
+               });
+           } else {
+             this.setState({
+               chatlog : chatlog
+             })
+             break;
+           }
+       }
+     }
+   })
+ }
+
   readChat = () => {
     const {account} = this.state
     fetch('/readNotif',{
@@ -161,6 +215,7 @@ export default class RoomChat extends React.Component{
       notif,
       chatlog
     } = this.state
+    console.log(chatlog);
     if(isLoading){
       return(
         <div>Loading.....</div>

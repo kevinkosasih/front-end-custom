@@ -2,21 +2,23 @@ import React from "react";
 import './content.css';
 import InputMessage from '../inputMessage/inputMessage';
 import {
-  recieveSocket
+  recieveSocket,
+  closeSocket
 }from "../../socket/socketconnect";
 
 export default class Content extends React.Component{
 
   constructor(props){
     super(props);
+
   }
 
   componentDidMount() {
     this.scrollToBottom();
-    this.scrollSocket();
   }
 
   componentDidUpdate(){
+    this.scrollToBottom();
   }
 
   getDateandTime =(timestamp,chat,index) => {
@@ -53,7 +55,7 @@ export default class Content extends React.Component{
     this.messagesEnd.scrollIntoView({behavior : "auto", block : "end"});
   }
 
-  scrollSocket(){
+  scrollSocket = () =>{
     recieveSocket ('changechatroom',(err,recieve) =>{
       this.scrollToBottom();
     })
@@ -70,6 +72,28 @@ export default class Content extends React.Component{
                 <div>
                   <div className = "dateAndTime">
                     {this.getDateandTime(chat.time,this.props.chatlog,urutan)}
+                  </div>
+                  <div className = "senderMessageName">
+                    {this.props.chatlog.length >= 0 ?
+                      urutan === 0 ?
+                        this.props.chatlog[urutan-1] === "undefined" ?
+                          chat.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                              <p>{chat.sender.name}</p>
+                            :
+                            null
+                          :
+                          <p>{chat.sender.name}</p>
+                        :
+                        this.props.chatlog[urutan-1] !== "undefined" ?
+                          chat.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                              <p>{chat.sender.name}</p>
+                            :
+                            null
+                          :
+                          null
+                      :
+                      null
+                    }
                   </div>
                   <div className = "userMessageContainer">
                     <div className = "userMessage">
@@ -89,8 +113,7 @@ export default class Content extends React.Component{
             }
           })}
           <div style={{ float:"right", clear: "both"}}
-            ref={(asd) => { this.messagesEnd = asd; }}>
-          </div>
+            ref={(div) => { this.messagesEnd = div; }}/>
         </div>
         <InputMessage
           chatList={chatList}
