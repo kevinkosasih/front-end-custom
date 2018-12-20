@@ -1,6 +1,7 @@
 import React from "react";
 import './content.css';
 import InputMessage from '../inputMessage/inputMessage';
+import doc from '../../picture/doc.png';
 import {
   recieveSocket,
   closeSocket
@@ -11,14 +12,33 @@ export default class Content extends React.Component{
   constructor(props){
     super(props);
 
+    this.state = {
+      isHovering: false,
+      openMenu: false,
+      chatlogLength : 0
+    }
   }
 
   componentDidMount() {
     this.scrollToBottom();
+    this.setState({
+      chatlogLength:this.props.chatlog.length
+    })
   }
 
   componentDidUpdate(){
-    this.scrollToBottom();
+    if(this.state.chatlogLength !== this.props.chatlog.length){
+      this.scrollToBottom();
+      this.setState({
+        chatlogLength:this.props.chatlog.length
+      })
+    }
+  }
+
+  changeState = (change) =>{
+    this.setState({
+      enterPress : change
+    })
   }
 
   getDateandTime =(timestamp,chat,index) => {
@@ -51,14 +71,53 @@ export default class Content extends React.Component{
     }
   }
 
-  scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({behavior : "auto", block : "end"});
+  fileName = (fileName) =>{
+    let name;
+    if(fileName.length > 45){
+      name = fileName.substring(0,45) +'. . .'
+    } else {
+      name = fileName
+    }
+    return name;
   }
 
-  scrollSocket = () =>{
-    recieveSocket ('changechatroom',(err,recieve) =>{
-      this.scrollToBottom();
-    })
+  viewImage = (name) =>{
+    window.open('http://localhost:3000/'+name);
+  }
+
+  downloadFile = (name) => {
+    window.open('http://localhost:3000/'+name, '_top');
+  }
+
+  handleMouseHover(flag,time) {
+    if(flag === 0){
+      this.setState(this.toggleHoverState(true,time));
+    }
+    else{
+      this.setState(this.toggleHoverState(false,time));
+    }
+  }
+
+  toggleHoverState(state,time) {
+    return {
+      isHovering: state,
+      openMenu : false,
+      timeDiv : time
+    };
+  }
+
+  MenuMessage = () =>{
+    this.setState(this.toggleMenuMessage)
+  }
+
+  toggleMenuMessage(state){
+    return{
+      openMenu : !state.openMenu
+    }
+  }
+
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({behavior : "auto", block : "end"});
   }
 
   render(){
@@ -105,9 +164,184 @@ export default class Content extends React.Component{
             } else {
               return(
                 <div className = "adminMessageContainer">
-                  <div className = "adminMessage">
-                    <p>{chat.message}</p>
-                  </div>
+                  {chat.message.split("\n").length > 1 || chat.message.length > 58 ?
+                    <div>
+                      {!chat.attachment ?
+                        <div className = "adminMessage">
+                          <p>{chat.message}</p>
+                        </div>
+                        :
+                        <div className = "adminMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,chat.time)}
+                          onMouseLeave={() => this.handleMouseHover(1,null)}>
+                          <div>
+                            {chat.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                              <div className = "attachmentFileName">
+                                <p>{this.fileName(chat.attachment.name)}</p>
+                                <img src = {doc}/>
+                                  <div>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === chat.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick ={() => this.downloadFile(chat.attachment.name)}>Download</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
+                                  </div>
+                              </div>
+                              :
+                              <div className = "attachment-picture">
+                                <img src = {chat.attachment.name}/>
+                                  <div>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === chat.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick ={() => this.viewImage(chat.attachment.name)}>View</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
+                                  </div>
+                              </div>
+                            }
+                          </div>
+                          <p>{chat.message}</p>
+                        </div>
+                      }
+                    </div>
+                    :
+                    <div>
+                      {!chat.attachment ?
+                        <div className = "adminMessage">
+                          <p>{chat.message}</p>
+                        </div>
+                        :
+                        chat.attachment && !chat.message ?
+                        <div className = "adminMessagePicOnly" onMouseEnter={() =>this.handleMouseHover(0,chat.time)}
+                          onMouseLeave={() => this.handleMouseHover(1,null)}>
+                          <div>
+                            {chat.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                              <div className = "attachmentFileName">
+                                <p>{this.fileName(chat.attachment.name)}</p>
+                                <img src = {doc}/>
+                                  <div>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === chat.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick ={() => this.downloadFile(chat.attachment.name)}>Download</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
+                                  </div>
+                              </div>
+                              :
+                              <div className = "attachment-picture">
+                                <img src = {chat.attachment.name}/>
+                                  <div>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === chat.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick ={() => this.viewImage(chat.attachment.name)}>View</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
+                                  </div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                        :
+                        <div className = "adminMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,chat.time)}
+                          onMouseLeave={() => this.handleMouseHover(1,null)}>
+                          <div>
+                            {chat.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                              <div className = "attachmentFileName">
+                                <p>{this.fileName(chat.attachment.name)}</p>
+                                <img src = {doc}/>
+                                  <div>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === chat.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick ={() => this.downloadFile(chat.attachment.name)}>Download</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
+                                  </div>
+                              </div>
+                              :
+                              <div className = "attachment-picture">
+                                <img src = {chat.attachment.name}/>
+                                  <div>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === chat.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick ={() => this.viewImage(chat.attachment.name)}>View</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
+                                  </div>
+                              </div>
+                            }
+                          </div>
+                          <p>{chat.message}
+                          </p>
+                        </div>
+                      }
+                    </div>
+                  }
+
                 </div>
               )
             }

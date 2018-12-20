@@ -43,6 +43,7 @@ export default class RoomChat extends React.Component{
         })
         sendSocket('readchat',account.chatID);
         sendSocket('changechatroom');
+        this.readChat();
       }
       else{
         this.setState({
@@ -163,7 +164,7 @@ export default class RoomChat extends React.Component{
                  date : chatlog[index].date,
                  message : chatlog[index].message,
                  attachment : chatlog[index].attachment,
-                 receiver:[{username :chatlog[index].receiver[0].username, read : true}],
+                 receiver:[{username :chatlog[index].receiver[0].username, name :chatlog[index].receiver[0].name, read : true}],
                  sender : {username : chatlog[index].sender.username,  name : chatlog[index].sender.name},
                  time : chatlog[index].time
                });
@@ -215,7 +216,6 @@ export default class RoomChat extends React.Component{
       notif,
       chatlog
     } = this.state
-    console.log(chatlog);
     if(isLoading){
       return(
         <div>Loading.....</div>

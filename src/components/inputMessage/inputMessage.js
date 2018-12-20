@@ -19,6 +19,7 @@ export default class inputMessage extends React.Component{
   componentDidMount(){
     document.addEventListener("keydown", this.onEnterPress, false);
   }
+
   componentWillUnmount(){
     document.removeEventListener("keydown", this.onEnterPress, false);
   }
@@ -107,7 +108,8 @@ export default class inputMessage extends React.Component{
     formData.append ('message', message);
     formData.append ('timeStamp', today);
     formData.append ('date', date);
-    formData.append ('recieve','ADMIN');
+    formData.append ('receiveUsername','ADMIN');
+    formData.append ('receiveName','Admin Official');
 
     fetch('/chat',{
       credentials : 'include',
@@ -119,6 +121,7 @@ export default class inputMessage extends React.Component{
         let send = {
           receiver:[
             {username:"ADMIN",
+            name : "Admin Official",
             read:false}
           ],
           sender:{
