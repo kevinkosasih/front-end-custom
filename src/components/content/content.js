@@ -15,7 +15,9 @@ export default class Content extends React.Component{
     this.state = {
       isHovering: false,
       openMenu: false,
-      chatlogLength : 0
+      chatlogLength : 0,
+      scrollTop : null,
+      scrollHeight : null
     }
   }
 
@@ -24,15 +26,41 @@ export default class Content extends React.Component{
     this.setState({
       chatlogLength:this.props.chatlog.length
     })
+    this.contextContainer.addEventListener('scroll',this.handleScroll,false);
   }
 
   componentDidUpdate(){
-    if(this.state.chatlogLength !== this.props.chatlog.length){
-      this.scrollToBottom();
-      this.setState({
-        chatlogLength:this.props.chatlog.length
-      })
+    if(this.state.scrollTop !== null || this.state.scrollHeight !== null){
+      if(this.state.chatlogLength !== this.props.chatlog.length && this.props.myUser.username === this.props.chatlog[this.props.chatlog.length - 1].sender.username){
+        this.scrollToBottom();
+        this.setState({
+          chatlogLength:this.props.chatlog.length
+        })
+      }
+      else if(this.state.chatlogLength !== this.props.chatlog.length && ((this.state.scrollHeight - this.state.scrollTop) <= 285 || (this.state.scrollHeight - this.state.scrollTop) === 286)){
+        this.scrollToBottom();
+        this.setState({
+          chatlogLength:this.props.chatlog.length
+        })
+      }
     }
+    else {
+      this.scrollToBottom();
+    }
+  }
+
+  handleScroll = (event) =>{
+      let scrollTop = Math.round(this.contextContainer.scrollTop);
+      let scrollHeight = this.contextContainer.scrollHeight;
+      let offsetHeight = this.contextContainer.offsetHeight;
+      let clientHeight = this.contextContainer.clientHeight;
+      let oneLastMessage =  Math.round(scrollHeight - scrollTop);
+      console.log(scrollTop);
+      console.log(scrollHeight);
+      this.setState({
+        scrollTop : scrollTop,
+        scrollHeight : scrollHeight
+      })
   }
 
   changeState = (change) =>{
@@ -122,9 +150,10 @@ export default class Content extends React.Component{
 
   render(){
     const{myUser,chatID,chatList}=this.props
+    console.log(this.props.chatlog);
     return(
       <div>
-        <div className = "contentChat">
+        <div className = "contentChat" ref={ref => {this.contextContainer = ref}}>
           {this.props.chatlog.map((chat,urutan)=>{
             if(chat.sender.username === myUser.username){
               return(
