@@ -161,6 +161,7 @@ export default class inputMessage extends React.Component{
               placeholder= "type a message . . ."
               value = {this.state.message}
               onChange = {this.messageOnChange}
+              spellcheck="false"
             />
           </form>
         </div>

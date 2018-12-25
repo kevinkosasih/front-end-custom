@@ -8,7 +8,7 @@
 }
 
 .senderMessageName {
-  color: black;
+  color: snow;
   float: right;
   clear: both;
   padding-right: 5px;
@@ -60,7 +60,7 @@
   text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
   text-align: left;
   font-family: HelveticaNeue;
-  color: black;
+  color: floralwhite;
 }
 
 .userMessage p {
@@ -97,7 +97,7 @@
   position: relative;
   text-align: left;
   text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
-  color: black;
+  color: ghostwhite;
   font-family: HelveticaNeue;
 }
 
