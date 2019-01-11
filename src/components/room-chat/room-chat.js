@@ -31,7 +31,6 @@ export default class RoomChat extends React.Component{
     this.recieveChatSocket();
     this.newchatlist(this.state.account.username);
     this.unsendMessageSocket(this.state.account.chatID);
-    this.readChatSocket(this.state.account.chatID);
   }
 
   recieveChatSocket = () =>{
@@ -41,7 +40,7 @@ export default class RoomChat extends React.Component{
         this.setState({
           chatlog:this.state.chatlog.concat(recieve.message)
         })
-        sendSocket('readchat',account.chatID);
+        sendSocket('readchat',{chatId:account.chatID});
         sendSocket('changechatroom');
         this.readChat();
       }
@@ -78,7 +77,6 @@ export default class RoomChat extends React.Component{
         })
         this.recieveChatSocket();
         this.unsendMessageSocket(this.state.account.chatID);
-        this.readChatSocket(this.state.account.chatID);
         if(json.akun.chatList.length === 0){
           this.newchatlist(json.akun.username);
         }
@@ -122,7 +120,7 @@ export default class RoomChat extends React.Component{
       notif: false,
       isOpen : true
     })
-    sendSocket('readchat',chat);
+    sendSocket('readchat',{chatId:chat});
     this.readChat()
   }
 
@@ -150,32 +148,6 @@ export default class RoomChat extends React.Component{
            chatlog : chatlog
          })
        }
-   })
- }
-
- readChatSocket (port) {
-   recieveSocket ('readchat'+port, (err,recieve) =>{
-     if(this.state.chatlog.length !== 0){
-       let chatlog = this.state.chatlog;
-       for(var index = chatlog.length-1 ; index >= 0 ; index--){
-           if(chatlog[index].receiver[0].read === false){
-             chatlog.splice(index,1,
-               { chatId: port,
-                 date : chatlog[index].date,
-                 message : chatlog[index].message,
-                 attachment : chatlog[index].attachment,
-                 receiver:[{username :chatlog[index].receiver[0].username, name :chatlog[index].receiver[0].name, read : true}],
-                 sender : {username : chatlog[index].sender.username,  name : chatlog[index].sender.name},
-                 time : chatlog[index].time
-               });
-           } else {
-             this.setState({
-               chatlog : chatlog
-             })
-             break;
-           }
-       }
-     }
    })
  }
 
