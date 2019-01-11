@@ -30,7 +30,8 @@ export default class Content extends React.Component{
   }
 
   componentDidUpdate(){
-    if(this.state.scrollTop !== null || this.state.scrollHeight !== null){
+    if((this.state.scrollTop !== null || this.state.scrollHeight !== null) && 
+    (this.props.chatlog !== null || this.state.chatlogLength !== 0)){
       if(this.state.chatlogLength !== this.props.chatlog.length && this.props.myUser.username === this.props.chatlog[this.props.chatlog.length - 1].sender.username){
         this.scrollToBottom();
         this.setState({
